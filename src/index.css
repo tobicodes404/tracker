@@ -1,37 +1,54 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   body {
-    @apply bg-neutral-950 text-neutral-100 antialiased;
-    font-feature-settings: "cv11", "ss01";
+    background-color: #0a0a0a; /* neutral-950 */
+    color: #f5f5f5; /* neutral-100 */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
   
-  /* Hide scrollbar for Chrome, Safari and Opera */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  /* Hide scrollbar for IE, Edge and Firefox */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
 @layer components {
   .premium-card {
-    @apply bg-neutral-900 border border-neutral-800 rounded-2xl shadow-sm transition-all duration-200;
+    background-color: #171717; /* neutral-900 */
+    border: 1px solid #262626; /* neutral-800 */
+    border-radius: 1rem;
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    transition: all 0.2s;
   }
   .premium-card:hover {
-    @apply border-neutral-700 shadow-md;
+    border-color: #404040; /* neutral-700 */
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   }
   .premium-btn {
-    @apply rounded-xl font-medium transition-all duration-200 active:scale-95;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+  .premium-btn:active {
+    transform: scale(0.95);
   }
   .premium-input {
-    @apply bg-neutral-900 border border-neutral-800 rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500/50 transition-all;
+    background-color: #171717;
+    border: 1px solid #262626;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: white;
+    transition: all;
+  }
+  .premium-input:focus {
+    outline: none;
+    border-color: #3b82f6; /* blue-500 */
+    box-shadow: 0 0 0 1px rgb(59 130 246 / 0.5);
   }
 }
