@@ -5,7 +5,6 @@ import { db } from '../../database/db';
 import { updateManhwaDetails } from '../../domain/usecases/UpdateManhwaDetails';
 import { updatePersonalMetadata } from '../../domain/usecases/UpdatePersonalMetadata';
 import { updateReadingProgress } from '../../domain/usecases/UpdateReadingProgress';
-import { ImageStorageService } from '../../services/images/ImageStorageService';
 import type { CharacterFavorite } from '../../domain/models/PersonalMetadata';
 import type { ReadingStatus } from '../../domain/models/ReadingStatus';
 

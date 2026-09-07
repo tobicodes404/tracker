@@ -13,9 +13,9 @@ export interface PersonalMetadata {
   enjoymentRating: number | null;
   notes: string;
   isFavorite: boolean;
+  isLocked: boolean;
+  isAdult: boolean;
   personalTags: string[];
   favoriteMaleCharacters: CharacterFavorite[];
   favoriteFemaleCharacters: CharacterFavorite[];
-  isAdult: boolean;
-  isLocked: boolean; // নতুন ফিল্ড: লক করা আছে কিনা
 }

@@ -4,7 +4,6 @@ import { exportBackup } from '../../backup/export/ExportBackup';
 import { importBackup } from '../../backup/import/ImportBackup';
 import { parseMihonBackup, type ParsedMihonManga } from '../../backup/mihon/MihonBackupService';
 import { db } from '../../database/db';
-import { addChapters } from '../../domain/usecases/AddChapters';
 
 export function BackupPage() {
   const navigate = useNavigate();
@@ -75,7 +74,6 @@ export function BackupPage() {
     setIsMihonImporting(true);
     try {
       let importedCount = 0;
-      let totalChapters = 0;
       
       for (const manga of mihonPreview) {
         const existing = await db.manhwa.where('title').equals(manga.title).first();

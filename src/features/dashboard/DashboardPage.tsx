@@ -66,7 +66,7 @@ export function DashboardPage() {
   }, []);
 
   const maxGenreCount = Math.max(...genreData.map(g => g.count), 1);
-  const maxHeatmapCount = Math.max(...heatmap.map(h => h.count), 1);
+  // Heatmap max calculated inline
   const weekProgress = Math.min((stats.chaptersWeek / weeklyGoal) * 100, 100);
 
   const formatTimeAgo = (timestamp: number) => {

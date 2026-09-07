@@ -27,7 +27,6 @@ export interface ParsedMihonManga {
 export async function parseMihonBackup(file: File): Promise<ParsedMihonManga[]> {
   try {
     let protoBytes: Uint8Array;
-
     try {
       const zip = await JSZip.loadAsync(file);
       let protoGzFile: JSZip.JSZipObject | null = null;
@@ -38,15 +37,11 @@ export async function parseMihonBackup(file: File): Promise<ParsedMihonManga[]> 
         }
       });
 
-      if (!protoGzFile) {
-        throw new Error('No .proto.gz file found inside the archive.');
-      }
+      if (!protoGzFile) throw new Error('No .proto.gz file found inside the archive.');
       
       const compressedData = await protoGzFile.async('uint8array');
       protoBytes = inflate(compressedData);
-      
     } catch (zipError) {
-      console.log("Not a valid ZIP, trying raw .proto.gz inflation...");
       const arrayBuffer = await file.arrayBuffer();
       protoBytes = inflate(new Uint8Array(arrayBuffer));
     }
@@ -54,23 +49,9 @@ export async function parseMihonBackup(file: File): Promise<ParsedMihonManga[]> 
     const protoRoot = await getProtoRoot();
     const Backup = protoRoot.lookupType('Backup');
     const message = Backup.decode(protoBytes);
-    const backupData = Backup.toObject(message, { 
-      longs: String, 
-      enums: String, 
-      defaults: true,
-      arrays: true 
-    });
-
-    // ক্যাটাগরি ম্যাপ তৈরি করা (ID -> Name)
-    const categoryMap = new Map<string, string>();
-    if (backupData.backupCategories) {
-      for (const cat of backupData.backupCategories) {
-        categoryMap.set(String(cat.id), cat.name || `Category ${cat.id}`);
-      }
-    }
+    const backupData = Backup.toObject(message, { longs: String, enums: String, defaults: true, arrays: true });
 
     const parsedMangas: ParsedMihonManga[] = [];
-
     if (backupData.backupManga) {
       for (const manga of backupData.backupManga) {
         let lastReadChapterUrl: string | null = null;
@@ -82,10 +63,7 @@ export async function parseMihonBackup(file: File): Promise<ParsedMihonManga[]> 
           lastReadTimestamp = lastHistory.lastRead ? Number(lastHistory.lastRead) : null;
         }
 
-        // ক্যাটাগরি ID গুলোকে নামে ম্যাপ করা
-        const categories = (manga.categories || [])
-          .map((id: any) => categoryMap.get(String(id)))
-          .filter(Boolean) as string[];
+        const categories = (manga.categories || []).map((cat: any) => cat.title || `Category ${cat.id}`).filter(Boolean);
 
         parsedMangas.push({
           title: manga.title || 'Unknown Title',
@@ -101,8 +79,6 @@ export async function parseMihonBackup(file: File): Promise<ParsedMihonManga[]> 
         });
       }
     }
-
-    console.log("Successfully parsed", parsedMangas.length, "manga. First one:", parsedMangas[0]);
     return parsedMangas;
   } catch (error) {
     console.error('Failed to parse Mihon backup:', error);
