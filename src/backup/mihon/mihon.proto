@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+message Backup {
+  repeated BackupManga backupManga = 1;
+  repeated BackupCategory backupCategories = 2;
+}
+
+message BackupManga {
+  int64 source = 1;
+  string url = 2;
+  string title = 3;
+  string artist = 4;
+  string author = 5;
+  string description = 6;
+  repeated string genre = 7;
+  int32 status = 8;
+  string thumbnailUrl = 9;
+  int64 dateAdded = 13;
+  int32 viewer = 14;
+  repeated BackupChapter chapters = 16;
+  repeated int64 categories = 17;
+  repeated BackupTracking tracking = 18;
+  bool favorite = 100;
+  int32 chapterFlags = 101;
+  repeated BackupHistory history = 104;
+}
+
+message BackupChapter {
+  string url = 1;
+  string name = 2;
+  int64 dateFetch = 3;
+  int64 dateRead = 4;
+  float number = 5;
+  int32 scanlator = 6;
+  int64 lastPageRead = 7;
+}
+
+message BackupHistory {
+  string url = 1;
+  int64 lastRead = 2;
+  int32 readDuration = 3;
+}
+
+message BackupTracking {
+  int32 syncId = 1;
+  int64 libraryId = 2;
+  string mediaId = 3;
+  string title = 4;
+  int32 lastChapterRead = 5;
+  int32 totalChapters = 6;
+  int32 status = 7;
+  int32 score = 8;
+  int64 startDate = 9;
+  int64 finishDate = 10;
+}
+
+message BackupCategory {
+  int64 id = 1;
+  string name = 2;
+  int32 order = 3;
+  int32 flags = 4;
+}
