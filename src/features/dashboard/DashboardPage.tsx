@@ -13,7 +13,7 @@ export function DashboardPage() {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ totalManhwa: 0, totalChaptersRead: 0, chaptersToday: 0, chaptersWeek: 0, streak: 0, avgRating: 0 });
   const [genreData, setGenreData] = useState<{ genre: string; count: number }[]>([]);
-  const [heatmap, setHeatmap] = useState<{ date: string; count: number }[]>([]);
+  const [_heatmap, setHeatmap] = useState<{ date: string; count: number }[]>([]);
   const [recentActivities, setRecentActivities] = useState<ActivityLog[]>([]);
   const weeklyGoal = 20;
 
@@ -33,7 +33,7 @@ export function DashboardPage() {
     return results;
   }, []);
 
-  const favorites = useLiveQuery(async () => {
+  const _favorites = useLiveQuery(async () => {
     const metas = await db.personalMetadata.toArray();
     const results = [];
     for (const m of metas) {

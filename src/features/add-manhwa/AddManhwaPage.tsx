@@ -47,6 +47,8 @@ export function AddManhwaPage() {
 
   const [maleCharacters, setMaleCharacters] = useState<CharacterFavorite[]>([]);
   const [femaleCharacters, setFemaleCharacters] = useState<CharacterFavorite[]>([]);
+  const [maleCharImages, setMaleCharImages] = useState<Record<string, File | null>>({});
+  const [femaleCharImages, setFemaleCharImages] = useState<Record<string, File | null>>({});
   const [newMaleChar, setNewMaleChar] = useState('');
   const [newFemaleChar, setNewFemaleChar] = useState('');
 

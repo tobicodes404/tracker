@@ -29,7 +29,7 @@ export async function parseMihonBackup(file: File): Promise<ParsedMihonManga[]> 
     let protoBytes: Uint8Array;
     try {
       const zip = await JSZip.loadAsync(file);
-      let protoGzFile: JSZip.JSZipObject | null = null;
+      let protoGzFile: any = null;
       
       zip.forEach((relativePath, zipEntry) => {
         if (relativePath.endsWith('.proto.gz')) {
