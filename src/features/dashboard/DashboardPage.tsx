@@ -33,17 +33,6 @@ export function DashboardPage() {
     return results;
   }, []);
 
-  const _favorites = useLiveQuery(async () => {
-    const metas = await db.personalMetadata.toArray();
-    const results = [];
-    for (const m of metas) {
-      if (m.isFavorite && m.manhwaId) {
-        const manhwa = await db.manhwa.get(m.manhwaId);
-        if (manhwa) results.push(manhwa);
-      }
-    }
-    return results.slice(0, 10);
-  }, []);
 
   useEffect(() => {
     const loadStats = async () => {
