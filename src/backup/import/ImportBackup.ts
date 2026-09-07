@@ -23,7 +23,7 @@ export async function importBackup(file: File): Promise<{ success: boolean; mess
     const mappings: any[] = JSON.parse(await zip.file('external-mappings.json')!.async('string'));
 
     // 3. Transactional Restore (Merge Strategy: Update if exists, Add if new)
-    await db.transaction('rw', db.manhwa, db.chapters, db.personalMetadata, db.readingProgress, db.externalMappings, db.images, async () => {
+    await db.transaction('rw', db.manhwa, db.chapters, db.personalMetadata, db.readingProgress, db.externalMappings, async () => {
       
       // Clear existing images to prevent orphaned blobs (optional, but safer for clean restore)
       await db.images.clear();

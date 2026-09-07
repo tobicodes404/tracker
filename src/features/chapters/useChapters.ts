@@ -2,19 +2,19 @@ import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../../database/db';
 import { parseChapterNumber } from '../../domain/models/ChapterNumberParser';
 import { compareChapterNumbers } from '../../domain/models/ChapterNumberComparator';
+import type { Chapter } from '../../domain/models/Chapter';
 
 export function useChapters(manhwaId: string) {
   const chapters = useLiveQuery(
-    () => {
-      if (!manhwaId) return Promise.resolve([]);
+    (): Promise<Chapter[]> => {
+      if (!manhwaId) return Promise.resolve([] as Chapter[]);
       return db.chapters.where('manhwaId').equals(manhwaId).toArray();
     },
     [manhwaId]
   );
 
-  // যখন পর্যন্ত ডেটা লোড হচ্ছে, তখন chapters undefined থাকে
   if (!chapters) {
-    return { chapters: [], isLoading: true };
+    return { chapters: [] as Chapter[], isLoading: true };
   }
 
   const sortedChapters = [...chapters].sort((a, b) => {

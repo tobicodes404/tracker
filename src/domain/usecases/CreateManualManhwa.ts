@@ -76,6 +76,7 @@ export async function createManualManhwa(input: CreateManualManhwaInput): Promis
     favoriteMaleCharacters: maleChars,
     favoriteFemaleCharacters: femaleChars,
     isAdult: input.isAdult ?? false,
+    isLocked: false,
   });
   
   await db.readingProgress.add({

@@ -51,8 +51,6 @@ export function AddManhwaPage() {
   const [newFemaleChar, setNewFemaleChar] = useState('');
 
   // Character image file inputs (multiple refs keyed by temp ID)
-  const [maleCharImages, setMaleCharImages] = useState<Record<string, File | null>>({});
-  const [femaleCharImages, setFemaleCharImages] = useState<Record<string, File | null>>({});
 
   useEffect(() => {
     const loadSuggestions = async () => {
@@ -100,7 +98,6 @@ export function AddManhwaPage() {
 
   const addMaleCharacter = () => {
     if (newMaleChar.trim() && !maleCharacters.find(c => c.name === newMaleChar.trim())) {
-      const id = crypto.randomUUID();
       setMaleCharacters([...maleCharacters, { name: newMaleChar.trim(), imageRef: null, imageFile: null }]);
       setNewMaleChar('');
     }
@@ -124,7 +121,6 @@ export function AddManhwaPage() {
   const handleMaleCharImage = (index: number, file: File | null) => {
     setMaleCharacters(prev => prev.map((c, i) => i === index ? { ...c, imageFile: file } : c));
     if (file) {
-      const url = URL.createObjectURL(file);
       // Store preview URL temporarily
       setMaleCharImages(prev => ({ ...prev, [`male-${index}`]: file }));
     }

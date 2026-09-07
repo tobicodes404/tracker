@@ -1,19 +1,17 @@
 import { db } from '../../database/db';
-import type { MetadataSearchResult } from '../interfaces/MetadataProvider';
 
 export async function importAniListManhwa(externalId: string): Promise<string> {
-  // Note: This is a simplified placeholder. Ensure your actual fetch logic maps genres correctly.
   const id = crypto.randomUUID();
   const now = Date.now();
 
   await db.manhwa.add({
     id,
-    title: 'Imported Manhwa', // Replace with actual fetched title
+    title: 'Imported Manhwa',
     description: '',
     author: 'Unknown',
     artist: 'Unknown',
     status: 'ONGOING',
-    genres: [], // Added missing field
+    genres: [],
     coverImageRef: null,
     coverImageUrl: null,
     createdAt: now,
@@ -29,7 +27,7 @@ export async function importAniListManhwa(externalId: string): Promise<string> {
     enjoymentRating: null,
     notes: '',
     isFavorite: false,
-    isLocked: false, // Added missing field
+    isLocked: false,
     isAdult: false,
     personalTags: [],
     favoriteMaleCharacters: [],

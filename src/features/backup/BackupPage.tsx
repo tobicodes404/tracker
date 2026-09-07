@@ -115,6 +115,14 @@ export function BackupPage() {
           notes: '',
           isFavorite: false,
           personalTags: [],
+          isLocked: false,
+          isAdult: false,
+          storyRating: null,
+          artRating: null,
+          characterRating: null,
+          enjoymentRating: null,
+          favoriteMaleCharacters: [],
+          favoriteFemaleCharacters: [],
         });
 
         // ২. রিডিং প্রোগ্রেস সেভ করা

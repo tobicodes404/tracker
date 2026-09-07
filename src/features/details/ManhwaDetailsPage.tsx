@@ -8,6 +8,7 @@ import { refreshMetadata } from '../../domain/usecases/RefreshMetadata';
 import { toggleChapterReadStatus, bulkUpdateChaptersReadStatus } from '../../domain/usecases/UpdateChapterReadStatus';
 import { deleteManhwa } from '../../domain/usecases/DeleteManhwa';
 import { addManhwaToCategory, removeManhwaFromCategory } from '../../domain/usecases/categories/ManageCategories';
+import type { Chapter } from '../../domain/models/Chapter';
 
 export function ManhwaDetailsPage() {
   const { id } = useParams<{ id: string }>();
@@ -19,8 +20,6 @@ export function ManhwaDetailsPage() {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isDeleting, setIsDeleting] = useState(false);
-  
-  // Drag select state
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartIndex, setDragStartIndex] = useState<number | null>(null);
   const chapterListRef = useRef<HTMLDivElement>(null);
@@ -55,11 +54,8 @@ export function ManhwaDetailsPage() {
 
   const handleToggleLock = async () => {
     if (!id || !personalData) return;
-    try {
-      await db.personalMetadata.update(id, { isLocked: !personalData.isLocked });
-    } catch (err) {
-      console.error('Failed to toggle lock', err);
-    }
+    try { await db.personalMetadata.update(id, { isLocked: !personalData.isLocked }); } 
+    catch (err) { console.error('Failed to toggle lock', err); }
   };
 
   const canRefresh = mapping?.providerName === 'anilist';
@@ -69,11 +65,10 @@ export function ManhwaDetailsPage() {
     await toggleChapterReadStatus(chapterId, !currentStatus);
   };
 
-  // Drag Select Handlers
   const handleDragStart = (index: number) => {
     setIsDragging(true);
     setDragStartIndex(index);
-    const chapterId = chapters[index].id;
+    const chapterId = (chapters as Chapter[])[index].id;
     setSelectedIds(prev => {
       const newSet = new Set(prev);
       if (newSet.has(chapterId)) newSet.delete(chapterId);
@@ -84,13 +79,11 @@ export function ManhwaDetailsPage() {
 
   const handleDragEnter = (index: number) => {
     if (!isDragging || dragStartIndex === null) return;
-    
     const start = Math.min(dragStartIndex, index);
     const end = Math.max(dragStartIndex, index);
-    
     const newSet = new Set<string>();
     for (let i = start; i <= end; i++) {
-      newSet.add(chapters[i].id);
+      newSet.add((chapters as Chapter[])[i].id);
     }
     setSelectedIds(newSet);
   };
@@ -100,15 +93,8 @@ export function ManhwaDetailsPage() {
     setDragStartIndex(null);
   };
 
-  const toggleSelection = (chapterId: string) => {
-    const newSet = new Set(selectedIds);
-    if (newSet.has(chapterId)) newSet.delete(chapterId);
-    else newSet.add(chapterId);
-    setSelectedIds(newSet);
-  };
-
   const selectAll = () => {
-    const allIds = new Set(chapters.map(c => c.id));
+    const allIds = new Set((chapters as Chapter[]).map(c => c.id));
     setSelectedIds(allIds);
   };
 
@@ -182,7 +168,7 @@ export function ManhwaDetailsPage() {
               <span className="px-2 py-1 bg-blue-600/20 text-blue-400 text-xs rounded">{progressData.status.replace('_', ' ')}</span>
               {personalData.isFavorite && <span className="px-2 py-1 bg-yellow-600/20 text-yellow-400 text-xs rounded">★ Fav</span>}
               {personalData.rating && <span className="px-2 py-1 bg-green-600/20 text-green-400 text-xs rounded">{personalData.rating}/10</span>}
-              {personalData.isLocked && <span className="px-2 py-1 bg-red-600/20 text-red-400 text-xs rounded"> Locked</span>}
+              {personalData.isLocked && <span className="px-2 py-1 bg-red-600/20 text-red-400 text-xs rounded">🔒 Locked</span>}
             </div>
           </div>
         </div>
@@ -191,14 +177,7 @@ export function ManhwaDetailsPage() {
           Edit Details & Progress
         </button>
 
-        <button 
-          onClick={handleToggleLock} 
-          className={`w-full py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 border ${
-            personalData.isLocked 
-              ? 'bg-red-900/30 border-red-800 text-red-400 hover:bg-red-900/50' 
-              : 'bg-neutral-800 border-neutral-700 text-neutral-300 hover:bg-neutral-700'
-          }`}
-        >
+        <button onClick={handleToggleLock} className={`w-full py-3 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 border ${personalData.isLocked ? 'bg-red-900/30 border-red-800 text-red-400 hover:bg-red-900/50' : 'bg-neutral-800 border-neutral-700 text-neutral-300 hover:bg-neutral-700'}`}>
           {personalData.isLocked ? '🔒 Locked (Hidden from Library)' : '🔓 Lock Manga (Hide from Library)'}
         </button>
 
@@ -209,13 +188,7 @@ export function ManhwaDetailsPage() {
               {categories.map(cat => {
                 const isInCategory = cat.manhwaIds.includes(id || '');
                 return (
-                  <button
-                    key={cat.id}
-                    onClick={() => handleCategoryToggle(cat.id, isInCategory)}
-                    className={`w-full flex items-center justify-between p-2.5 rounded-lg border transition-colors ${
-                      isInCategory ? 'bg-blue-900/20 border-blue-800' : 'bg-neutral-900 border-neutral-700 hover:border-neutral-500'
-                    }`}
-                  >
+                  <button key={cat.id} onClick={() => handleCategoryToggle(cat.id, isInCategory)} className={`w-full flex items-center justify-between p-2.5 rounded-lg border transition-colors ${isInCategory ? 'bg-blue-900/20 border-blue-800' : 'bg-neutral-900 border-neutral-700 hover:border-neutral-500'}`}>
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-lg ${cat.color} flex items-center justify-center text-sm`}>{cat.icon || ''}</div>
                       <div className="text-left">
@@ -239,42 +212,35 @@ export function ManhwaDetailsPage() {
           </div>
         )}
 
-        {/* Chapters Section with Drag Select */}
         <div className="border-t border-neutral-800 pt-4">
           <div className="flex justify-between items-center mb-3">
-            <h2 className="text-lg font-semibold">Chapters ({chapters.length})</h2>
+            <h2 className="text-lg font-semibold">Chapters ({(chapters as Chapter[]).length})</h2>
             <div className="flex gap-2">
-              {!isSelectionMode && chapters.length > 0 && (
+              {!isSelectionMode && (chapters as Chapter[]).length > 0 && (
                 <button onClick={() => setIsSelectionMode(true)} className="text-xs text-blue-400 hover:text-blue-300 font-medium">Select</button>
               )}
               <button onClick={() => navigate(`/chapters/${id}/add`)} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium">+ Add</button>
             </div>
           </div>
           
-          {chapters.length === 0 ? (
+          {(chapters as Chapter[]).length === 0 ? (
             <div className="text-center py-8 text-neutral-500 text-sm"><p>No chapters added yet</p></div>
           ) : (
             <div ref={chapterListRef} className="space-y-2 select-none">
               {isSelectionMode && (
                 <div className="flex gap-2 mb-3">
-                  <button onClick={selectAll} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-medium">
-                    Select All
-                  </button>
-                  <button onClick={deselectAll} className="flex-1 bg-neutral-700 hover:bg-neutral-600 text-white py-2 rounded-lg text-xs font-medium">
-                    Deselect All
-                  </button>
+                  <button onClick={selectAll} className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-medium">Select All</button>
+                  <button onClick={deselectAll} className="flex-1 bg-neutral-700 hover:bg-neutral-600 text-white py-2 rounded-lg text-xs font-medium">Deselect All</button>
                 </div>
               )}
               
               {isSelectionMode && (
                 <div className="bg-blue-900/20 border border-blue-800 p-2 rounded-lg mb-3">
-                  <p className="text-xs text-blue-300 text-center">
-                    💡 Click & drag to select multiple chapters
-                  </p>
+                  <p className="text-xs text-blue-300 text-center">💡 Click & drag to select multiple chapters</p>
                 </div>
               )}
 
-              {chapters.map((chapter, index) => {
+              {(chapters as Chapter[]).map((chapter, index) => {
                 const isSelected = selectedIds.has(chapter.id);
                 return (
                   <div 
@@ -297,13 +263,7 @@ export function ManhwaDetailsPage() {
                     onTouchEnd={() => isSelectionMode && handleDragEnd()}
                     data-chapter-index={index}
                     onClick={() => !isSelectionMode && handleToggleRead(chapter.id, chapter.isRead)}
-                    className={`flex justify-between items-center p-3 rounded-lg border cursor-pointer transition-all ${
-                      isSelected 
-                        ? 'bg-blue-900/30 border-blue-500 shadow-lg' 
-                        : chapter.isRead 
-                          ? 'bg-neutral-800/50 border-neutral-700 opacity-70' 
-                          : 'bg-neutral-800 border-neutral-700 hover:border-neutral-500'
-                    } ${isDragging && isSelected ? 'scale-105' : ''}`}
+                    className={`flex justify-between items-center p-3 rounded-lg border cursor-pointer transition-all ${isSelected ? 'bg-blue-900/30 border-blue-500 shadow-lg' : chapter.isRead ? 'bg-neutral-800/50 border-neutral-700 opacity-70' : 'bg-neutral-800 border-neutral-700 hover:border-neutral-500'} ${isDragging && isSelected ? 'scale-105' : ''}`}
                   >
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       {isSelectionMode && (
@@ -312,9 +272,7 @@ export function ManhwaDetailsPage() {
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className={`font-medium text-sm ${chapter.isRead ? 'text-neutral-400 line-through' : 'text-white'}`}>
-                          {chapter.chapterNumber}
-                        </div>
+                        <div className={`font-medium text-sm ${chapter.isRead ? 'text-neutral-400 line-through' : 'text-white'}`}>{chapter.chapterNumber}</div>
                       </div>
                     </div>
                     {!isSelectionMode && <div className={`w-3 h-3 rounded-full flex-shrink-0 ${chapter.isRead ? 'bg-green-500' : 'bg-neutral-600'}`}></div>}
