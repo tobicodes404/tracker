@@ -1,54 +1,10 @@
 @import "tailwindcss";
 
-@layer base {
-  body {
-    background-color: #0a0a0a; /* neutral-950 */
-    color: #f5f5f5; /* neutral-100 */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
+body {
+  background-color: #0a0a0a;
+  color: #f5f5f5;
+  font-family: system-ui, -apple-system, sans-serif;
 }
 
-@layer components {
-  .premium-card {
-    background-color: #171717; /* neutral-900 */
-    border: 1px solid #262626; /* neutral-800 */
-    border-radius: 1rem;
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    transition: all 0.2s;
-  }
-  .premium-card:hover {
-    border-color: #404040; /* neutral-700 */
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
-  }
-  .premium-btn {
-    border-radius: 0.75rem;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-  .premium-btn:active {
-    transform: scale(0.95);
-  }
-  .premium-input {
-    background-color: #171717;
-    border: 1px solid #262626;
-    border-radius: 0.75rem;
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    color: white;
-    transition: all;
-  }
-  .premium-input:focus {
-    outline: none;
-    border-color: #3b82f6; /* blue-500 */
-    box-shadow: 0 0 0 1px rgb(59 130 246 / 0.5);
-  }
-}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
